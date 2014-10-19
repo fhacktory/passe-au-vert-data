@@ -1,22 +1,37 @@
-window.onload = function () {
+/* Configuration */
 
+var REFRESH_INTERVAL = 1000 / 30;
 
-var SIZE_CIRCUIT = 700
-var PAD_X = 50
-var PAD_Y = 50
+var SIZE_CIRCUIT = 700;
+var PAD_X = 50;
+var PAD_Y = 50;
 
-var V_MAX = 50
-var ACC = 2
+var V_MAX = 50;
+var ACC = 2;
 
-var scale_x = function(x) {
+var trafficLight1 = {
+    offset: 0, // Time to first Red to Green change (in milliseconds)
+    cycle_time: 10000, // (in milliseconds)
+    green_cycle_time: 4000, // (in milliseconds)
+    orange_cycle_time: 1000, // (in milliseconds)
+    red_cycle_time: 3000, // (in milliseconds)
+};
+
+var time;
+
+/* Animation */
+
+function scale_x(x) {
     return PAD_X + SIZE_CIRCUIT * x;
 }
 
-var scale_y = function(y) {
+function scale_y(y) {
     return PAD_Y + SIZE_CIRCUIT * y;
 }
 
-var canvas = document.getElementById('mon_canvas');
+window.onload = function () {
+
+var canvas = document.getElementById('canvas');
 if (!canvas) {
     alert("Impossible de récupérer le canvas");
     return;
@@ -29,7 +44,7 @@ if (!context) {
 }
 
 // Calls animate 30 times per second.
-var Interval = setInterval(animate, 1000 / 30);
+var Interval = setInterval(animate, REFRESH_INTERVAL);
 
 var circuit = [{
     'x': scale_x(0),
@@ -75,14 +90,13 @@ var preprocessCircuit = function (c) {
     return c;
 }
 
-//Ideally total_length should be a method of a circuit object.
+// Ideally total_length should be a method of a circuit object.
 var total_length = lengthCircuit(circuit);
 
 segment_proportions = preprocessCircuit(circuit)
 var speed = 1 / total_length;
 var direction = 'y';
 var s = 0;
-
 
 var parameterizedPosition = function (s) {
     // Lister les proportions dans le circuit après preprocess
@@ -111,7 +125,6 @@ var parameterizedPosition = function (s) {
     };
 };
 
-
 var drawBicycle = function (s) {
     var coordinates = parameterizedPosition(s);
     var slope_x = (coordinates.dir_x) / (Math.sqrt(Math.pow(coordinates.dir_x, 2) + Math.pow(coordinates.dir_y, 2)))
@@ -139,9 +152,6 @@ var drawBicycle = function (s) {
 };
 //*/
 
-
-
-
 function animate() {
     // We clean the canvas.
     context.clearRect(0, 0, canvas.width, canvas.height);
@@ -162,6 +172,10 @@ function animate() {
     context.closePath();
 }}
 
+
+/* Algorithm */
+
+/*
 var bicycle_traffic_offset = function (s_to_light, v_start, t_cycle) {
     t_to_light = s_to_light * v_start;
 
@@ -207,21 +221,4 @@ var bicycle_traffic_offset = function (s_to_light, v_start, t_cycle) {
 
     }
 }
-
-var is_reachable = function (s_start, v_start, s_target, t_left) {
-    // Return if the target is reachable in the alloted time t_left.
-
-    // We start by computing the furthest we could go.
-    // We have 2 phases: phase 1 is acceleration, phase 2 is max speed.
-    t_acc_max = 2 * (V_MAX - v_start) / ACC;
-    s_max_phase_1 = s_start + t_acc_max * v_start + 0.5 * ACC * (t_acc_max ** 2);
-    s_max_phase_2 = s_max_phase_1 + Math.max(t_left - t_acc_max, 0) * V_MAX;
-
-    // We compare it to our target.
-    if(s_max_phase_2 > s_target) {
-        return true;
-    }
-    else{
-        return false;
-    }
-}
+*/
