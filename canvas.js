@@ -75,20 +75,6 @@ var preprocessCircuit = function (c) {
     return c;
 }
 
-var is_reachable = function (s_start, v_start, s_target, t_left) {
-    // Return if the target is reachable in the alloted time t_left.
-
-    // We start by computing the furthest we could go.
-    // We have 2 phases: phase 1 is acceleration, phase 2 is max speed.
-    t_acc_max = 2 * (V_MAX - v_start) / ACC;
-    s_max_phase_1 = s_start + t_acc_max * v_start + 0.5 * ACC * (t_acc_max ** 2);
-    s_max_phase_2 = s_max_phase_1 + Math.max(t_left - t_acc_max, 0) * V_MAX;
-
-    // We compare it to our target.
-    if(s_max_phase_2 > s_target) {
-    }
-}
-
 //Ideally total_length should be a method of a circuit object.
 var total_length = lengthCircuit(circuit);
 
@@ -175,3 +161,67 @@ function animate() {
     context.stroke();
     context.closePath();
 }}
+
+var bicycle_traffic_offset = function (s_to_light, v_start, t_cycle) {
+    t_to_light = s_to_light * v_start;
+
+    t_offset = t_to_light % t_cycle + t_offset_light
+
+    light.remaining_time
+    light.remaining_time + light.state
+
+    
+
+    if(light.state = 'Green') {
+        if(t_offset < light.remaining_time ) {
+
+
+        }
+         > light.green_cycle_time ) {
+
+        }
+    }
+    if(light.state = 'Orange') {
+        
+    }
+    if(light.state = 'Red') {
+        
+    }
+    if(t_offset > light.remaining_time and ) {
+
+    }
+
+    light.state = 'Orange'
+    light.remaining_time
+
+
+    if (red orange)
+    t_to_light % t_cycle - t_next_green
+    else
+    t_
+
+    if(t_to_light % t_cycle < t_green_cycle) {
+        ok
+    }
+    else {
+
+    }
+}
+
+var is_reachable = function (s_start, v_start, s_target, t_left) {
+    // Return if the target is reachable in the alloted time t_left.
+
+    // We start by computing the furthest we could go.
+    // We have 2 phases: phase 1 is acceleration, phase 2 is max speed.
+    t_acc_max = 2 * (V_MAX - v_start) / ACC;
+    s_max_phase_1 = s_start + t_acc_max * v_start + 0.5 * ACC * (t_acc_max ** 2);
+    s_max_phase_2 = s_max_phase_1 + Math.max(t_left - t_acc_max, 0) * V_MAX;
+
+    // We compare it to our target.
+    if(s_max_phase_2 > s_target) {
+        return true;
+    }
+    else{
+        return false;
+    }
+}
