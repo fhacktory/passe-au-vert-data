@@ -10,6 +10,7 @@ var V_MAX = 50;
 var ACC = 2;
 
 var trafficLight1 = {
+    s_position: 0.5,
     offset: 0, // Time to first Red to Green change (in milliseconds)
     cycle_time: 10000, // (in milliseconds)
     green_cycle_time: 4000, // (in milliseconds)
@@ -17,7 +18,7 @@ var trafficLight1 = {
     red_cycle_time: 3000, // (in milliseconds)
 };
 
-var time;
+var time, indication;
 
 
 /* Model */
@@ -196,7 +197,12 @@ var drawBicycle = function (s) {
 //*/
 
 function animate() {
-    drawTrafficLight(trafficLight1);
+    var trafficLightState;
+    time += REFRESH_INTERVAL;
+
+    trafficLightState = getTrafficLightState(trafficLight1, time);
+    drawTrafficLight(trafficLightState);
+    bicycleDecision(s - trafficLight1.s_position, speed, trafficLight1.cycle_time, trafficLightState);
 
     // We clean the canvas.
     context.clearRect(0, 0, canvas.width, canvas.height);
@@ -217,20 +223,36 @@ function animate() {
     context.closePath();
 }
 
-var drawTrafficLight;
+var drawTrafficLight, bicycleDecision;
 $(function() {
 
-    drawTrafficLight = function(trafficLight) {
-        var trafficLightState = getTrafficLightState(trafficLight);
-
+    drawTrafficLight = function(trafficLightState) {
         $('.trafficLightColor').hide();
         $('#trafficLight' + trafficLightState.state).show();
         $('#trafficLightRemainingTime').html((trafficLightState.remaining_time / 1000).toFixed(2) + ' s');
     }
 
+    bicycleDecision = function(s_to_light, v_start, t_cycle, trafficLightState) {
+        var t_to_light, t_offset;
+
+        t_to_light = s_to_light * v_start;
+        t_offset = t_to_light % t_cycle;
+
+        if (trafficLightState.state === "Green" && t_offset < trafficLightState.remaining_time) {
+            indication = "Continue";
+        } else if (trafficLightState.state === "Red" && t_offset >= trafficLightState.remaining_time) {
+            indication = "Continue";
+        } else {
+            indication = "Accelerate or Decelerate";
+        }
+
+        $('#indication').html(indication);
+        console.log(indication);
+    }
+
+    time = 0;
     setInterval(animate, REFRESH_INTERVAL);
 });
-
 
 
 /* Passe au Vert Algorithm */
