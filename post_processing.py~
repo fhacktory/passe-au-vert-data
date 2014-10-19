@@ -2,9 +2,6 @@ from datetime import time
 import numpy as np
 import pandas as pd
 
-cd fhacktory/passe_au_vert/
-data = pd.read_csv('collected_data.csv')
-
 def xls_to_seconds(t):
     return t * 24 * 3600
 for light_id in data.traffic_light_id.drop_duplicates():
