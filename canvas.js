@@ -1,6 +1,6 @@
 /* Configuration */
 
-var REFRESH_INTERVAL = 1000 / 30;
+var REFRESH_INTERVAL = 1000 / 30; // Calls animate 30 times per second.
 
 var SIZE_CIRCUIT = 700;
 var PAD_X = 50;
@@ -19,6 +19,52 @@ var trafficLight1 = {
 
 var time;
 
+
+/* Model */
+/*
+var trafficLight = {
+    offset: 0, // Time to first Red to Green change (in milliseconds)
+    cycle_time: 10000, // (in milliseconds)
+    green_cycle_time: 4000, // (in milliseconds)
+    orange_cycle_time: 1000, // (in milliseconds)
+    red_cycle_time: 3000, // (in milliseconds)
+};
+*/
+
+function getTrafficLightState(trafficLight, time) {
+    var state = {}, cycleOffset;
+
+    cycleOffset = time % trafficLight.cycle_time;
+    cycleOffset -= trafficLight.offset;
+    if (cycleOffset < 0) {
+        cycleOffset += trafficLight.cycle_time;
+    }
+
+    if (cycleOffset < trafficLight.green_cycle_time) {
+        state.state = "Green";
+        state.remaining_time = trafficLight.green_cycle_time - cycleOffset;
+    } else if (cycleOffset < trafficLight.green_cycle_time + trafficLight.orange_cycle_time) {
+        state.state = "Orange";
+        state.remaining_time = (trafficLight.green_cycle_time + trafficLight.orange_cycle_time) - cycleOffset;
+    } else {
+        state.state = "Red";
+        state.remaining_time = trafficLight.cycle_time - cycleOffset;
+    }
+
+    return state;
+}
+
+/* Tests */
+/*
+console.log(getTrafficLightState(trafficLight, 300));
+console.log(getTrafficLightState(trafficLight, 4020));
+console.log(getTrafficLightState(trafficLight, 5090));
+
+console.log(getTrafficLightState(trafficLight, 204020));
+*/
+
+
+
 /* Animation */
 
 function scale_x(x) {
@@ -29,7 +75,7 @@ function scale_y(y) {
     return PAD_Y + SIZE_CIRCUIT * y;
 }
 
-window.onload = function () {
+window.onload = function() {
 
 var canvas = document.getElementById('canvas');
 if (!canvas) {
@@ -42,9 +88,6 @@ if (!context) {
     alert("Impossible de récupérer le context du canvas");
     return;
 }
-
-// Calls animate 30 times per second.
-var Interval = setInterval(animate, REFRESH_INTERVAL);
 
 var circuit = [{
     'x': scale_x(0),
@@ -153,6 +196,8 @@ var drawBicycle = function (s) {
 //*/
 
 function animate() {
+    drawTrafficLight(trafficLight1);
+
     // We clean the canvas.
     context.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -170,10 +215,47 @@ function animate() {
 
     context.stroke();
     context.closePath();
-}}
+}
+
+var drawTrafficLight;
+$(function() {
+
+    drawTrafficLight = function(trafficLight) {
+        var trafficLightState = getTrafficLightState(trafficLight);
+
+        $('.trafficLightColor').hide();
+        $('#trafficLight' + trafficLightState.state).show();
+        $('#trafficLightRemainingTime').html((trafficLightState.remaining_time / 1000).toFixed(2) + ' s');
+    }
+
+    setInterval(animate, REFRESH_INTERVAL);
+});
 
 
-/* Algorithm */
+
+/* Passe au Vert Algorithm */
+
+function isReachable(s_start, v_start, s_target, t_left) {
+    // Return if the target is reachable in the alloted time t_left.
+
+    // We start by computing the furthest we could go.
+    // We have 2 phases: phase 1 is acceleration, phase 2 is max speed.
+    t_acc_max = 2 * (V_MAX - v_start) / ACC;
+
+    return false;
+
+    /*
+    s_max_phase_1 = s_start + t_acc_max * v_start + 0.5 * ACC * (t_acc_max ** 2);
+    s_max_phase_2 = s_max_phase_1 + Math.max(t_left - t_acc_max, 0) * V_MAX;
+
+    // We compare it to our target.
+    if (s_max_phase_2 > s_target) {
+        return true;
+    } else {
+        return false;
+    }
+    */
+}
 
 /*
 var bicycle_traffic_offset = function (s_to_light, v_start, t_cycle) {
@@ -222,3 +304,5 @@ var bicycle_traffic_offset = function (s_to_light, v_start, t_cycle) {
     }
 }
 */
+
+};

@@ -2,12 +2,23 @@
 <html>
     <head>
         <title>Passe au vert Game</title>
-        <script src="trafficLight.js"></script>
+
+		<script src="https://code.jquery.com/jquery-1.11.0.min.js"></script>
+        
         <script src="canvas.js"></script>
     </head>
     <body>
+
         <canvas id="canvas" width="800" height="800">
             Message pour les navigateurs ne supportant pas encore canvas.
         </canvas>
+
+		<p>
+			<img id="trafficLightRed" class="trafficLightColor hidden" alt="Red" src="images/traffic_light_red.svg" />
+			<img id="trafficLightOrange" class="trafficLightColor hidden" alt="Orange" src="images/traffic_light_orange.svg" />
+			<img id="trafficLightGreen" class="trafficLightColor hidden" alt="Green" src="images/traffic_light_green.svg" />
+		</p>
+		<p id="trafficLightRemainingTime"></p>
+
     </body>
 </html>
